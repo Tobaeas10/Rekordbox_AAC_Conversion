@@ -42,7 +42,7 @@ def main():
             sys.exit(f"{k} missing in .env")
     work = c.get("WORK_DIR", "work")
     base = [sys.executable, str(SCRIPT), "--db", c["RB_DB"], "--key", c["RB_KEY"], "--qaac", c["QAAC"],
-            "--work", work, "--xcorr", c.get("XCORR", "3"), "--jobs", c.get("JOBS", "1")]
+            "--work", work, "--xcorr", c.get("XCORR", "3"), "--tvbr", c.get("QUALITY", "109"), "--jobs", c.get("JOBS", "1")]
     if c.get("BATCH_SIZE", "0") not in ("", "0"):
         base += ["--limit", c["BATCH_SIZE"]]
     if c.get("MATCH"):
@@ -52,7 +52,7 @@ def main():
         return subprocess.run(base + list(extra)).returncode
 
     print("Rekordbox wav -> m4a migration")
-    print(f"  master.db : {c['RB_DB']}\n  work dir  : {work}\n  batch size: {c.get('BATCH_SIZE', '0')}")
+    print(f"  master.db : {c['RB_DB']}\n  work dir  : {work}\n  batch size: {c.get('BATCH_SIZE', '0')}\n  AAC quality: TVBR {c.get('QUALITY', '109')}")
     if ask("Is Rekordbox CLOSED and master.db backed up? Type yes:").lower() != "yes":
         sys.exit("aborted.")
 

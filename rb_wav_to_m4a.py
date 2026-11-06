@@ -421,7 +421,7 @@ def encode_one(e, args):
         if ok:
             return "encoded", {"w": w, "info": info}
         return "failed", f"existing m4a does not verify: {msg}"
-    p = run([args.qaac, "--tvbr", "109", str(src), "-o", str(tmp)], text=True, errors="replace")
+    p = run([args.qaac, "--tvbr", str(args.tvbr), str(src), "-o", str(tmp)], text=True, errors="replace")
     if p.returncode != 0 or not tmp.exists():
         tmp.unlink(missing_ok=True)
         return "failed", f"qaac exit {p.returncode}: {p.stderr.strip()[-200:]}"
@@ -674,6 +674,7 @@ def main():
     ap.add_argument("--limit", type=int, default=0)
     ap.add_argument("--ids", default="", help="comma separated djmdContent IDs")
     ap.add_argument("--match", default="")
+    ap.add_argument("--tvbr", type=int, default=109, help="qaac TVBR quality 0-127 (default 109)")
     ap.add_argument("--jobs", type=int, default=1)
     ap.add_argument("--xcorr", type=int, default=3, help="cross-correlate the first N encodes (0=off)")
     ap.add_argument("--adopt-existing", action="store_true")
@@ -682,6 +683,8 @@ def main():
     ap.add_argument("--yes", action="store_true")
     ap.add_argument("cmd", choices=["dry-run", "encode", "apply", "install"])
     args = ap.parse_args()
+    if not 0 <= args.tvbr <= 127:
+        ap.error("--tvbr must be between 0 and 127")
     args.ids = [x for x in args.ids.split(",") if x]
     args.path_map = [tuple(x.split("=", 1)) for x in args.path_map]
     args.work.mkdir(parents=True, exist_ok=True)
