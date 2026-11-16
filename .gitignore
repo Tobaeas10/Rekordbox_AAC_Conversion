@@ -1,0 +1,9 @@
+data/.env
+data/state/
+data/backups/
+data/cache/
+logs/
+debug/
+__pycache__/
+*.pyc
+.idea/
